@@ -1,16 +1,9 @@
-# ev_app
+# Electric Vehicle Mobile app
+It is a Android app to monitor and control electric vehicle with Arm-based Embedded system and ESP2866 Wi-Fi module.
 
-A new Flutter project.
+## ScreenShots 🖼️
+<div align='center'>
+<img height="450px" src="https://user-images.githubusercontent.com/38363762/163733290-87ad6dc3-8ceb-429d-9965-33d90b6f0f7e.png">
+<hr/>
+</div>
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
