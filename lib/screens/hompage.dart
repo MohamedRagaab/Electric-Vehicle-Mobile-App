@@ -1,8 +1,9 @@
+import 'dart:async';
+
 import 'package:ev_app/http/http_requests.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,9 +14,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool status1 = false;
-  double tempDegree = 30.0;
+  double tempDegree = 12.0;
   double actualSpeed = 120.0;
-  double sePointSpeed = 75.0;
+  int setPointSpeed = 75;
+
+  @override
+  void initState() {
+    super.initState();
+    getTemperaturePeriodically();
+    getSpeedPeriodically();
+  }
+
   @override
   Widget build(BuildContext context) {
     const gridColor = Color.fromARGB(255, 64, 63, 65);
@@ -32,13 +41,7 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.only(right: 10),
             child: IconButton(
               onPressed: () {
-                const AlertDialog(
-                  title: Text('Welcome'),
-                  content: Text(
-                    'Fergany',
-                  ),
-                  actions: [],
-                );
+                _showMyDialog(context);
               },
               icon: const Icon(Icons.error),
             ),
@@ -167,6 +170,9 @@ class _HomePageState extends State<HomePage> {
                           fontWeight: FontWeight.bold),
                     ),
                   ),
+                  SizedBox(
+                    height: _height * 0.05,
+                  ),
                   CircularPercentIndicator(
                     radius: 40.0,
                     lineWidth: 5.0,
@@ -207,15 +213,17 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   SizedBox(
-                    height: _height * 0.1,
+                    height: _height * 0.01,
                   ),
-                  LinearPercentIndicator(
-                    width: _width * 0.45,
-                    lineHeight: 14.0,
+                  CircularPercentIndicator(
+                    radius: 50.0,
+                    lineWidth: 8.0,
                     percent: (actualSpeed / 150.0),
-                    barRadius: const Radius.circular(20),
-                    backgroundColor: Colors.grey,
-                    progressColor: const Color.fromARGB(255, 243, 33, 201),
+                    center: Text(
+                      actualSpeed.toString() + ' RPM',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    progressColor: Color.fromARGB(255, 239, 26, 143),
                   ),
                   SizedBox(
                     height: _height * 0.03,
@@ -259,18 +267,19 @@ class _HomePageState extends State<HomePage> {
                     height: _height * 0.06,
                   ),
                   Slider(
-                    value: sePointSpeed,
+                    value: setPointSpeed/1.0,
                     max: 150.0,
-                    divisions: 5,
-                    label: (sePointSpeed / 100).round().toString(),
+                    divisions: 10,
+                    label: (setPointSpeed / 100).round().toString(),
                     onChanged: (double value) {
                       setState(() {
-                        sePointSpeed = value;
+                        setPointSpeed = value.round();
                       });
+                      controlSpeed(setPointSpeed);
                     },
                   ),
                   Text(
-                    sePointSpeed.toString() + ' RPM',
+                    setPointSpeed.toString() + ' RPM',
                     style: const TextStyle(
                         fontSize: 15,
                         color: Colors.white,
@@ -280,9 +289,78 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          // Closed Speed Control *****************************************
+          // Closed Speed Control **********************************************
         ],
       ),
+    );
+  }
+
+/* Functions********************************************************************/
+/* get Temperature Periodically ************************************************/
+  getTemperaturePeriodically() async {
+    var temp;
+    Timer.periodic(const Duration(seconds: 2), (timer) async {
+      temp = await getTemp();
+      print(temp);
+      setState(() {
+        tempDegree = temp / 1.0;
+        tempDegree > 100 ? tempDegree = 100.0 : tempDegree = tempDegree;
+      });
+    });
+  }
+
+/* get speed Periodically ******************************************************/
+  getSpeedPeriodically() async {
+    var speed;
+    Timer.periodic(const Duration(seconds: 1), (timer) async {
+      speed = await getSpeed();
+      print(speed);
+
+      setState(() {
+        actualSpeed = speed / 1.0;
+      });
+    });
+  }
+
+/* control speed Periodically ******************************************************/
+ /* controlSpeedOnChange() async {
+    Timer.periodic(const Duration(seconds: 3), (timer) async {
+      await controlSpeed();
+      setState(() {});
+    });
+  }
+*/
+//* About My App ***************************************************************/
+  Future<void> _showMyDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('About'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text(
+                    'This app is monitoring and controling an electric vehicle with Arm-based Embedded system and ESP2866 Wi-Fi module.'),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                    'This software is licensed under MIT License, ©MohamedRagab.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
