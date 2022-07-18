@@ -2,7 +2,7 @@ import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
 
 /* Motor Turn On/Off ***********************************************************/
-var urlWeb = 'driver.6te.net';
+var urlWeb = 'fergany.orgfree.com';
 onMotor() async {
   var url = Uri.http(urlWeb, '/index.php', {'on_off': '1'});
   var response = await http.get(url);

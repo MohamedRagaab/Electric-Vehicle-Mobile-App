@@ -13,10 +13,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  TextEditingController serverController = TextEditingController();
   bool status1 = false;
   double tempDegree = 12.0;
   double actualSpeed = 120.0;
   int setPointSpeed = 75;
+  //var urlWeb = 'null';
 
   @override
   void initState() {
@@ -87,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                           child: Text(
                             'Off',
                             style: TextStyle(
-                                fontSize: 15,
+                                fontSize: 12,
                                 color: status1 == false
                                     ? Colors.red
                                     : Colors.black,
@@ -131,7 +133,7 @@ class _HomePageState extends State<HomePage> {
                           child: Text(
                             'On',
                             style: TextStyle(
-                                fontSize: 15,
+                                fontSize: 12,
                                 color: status1 == true
                                     ? Colors.green
                                     : Colors.black,
@@ -213,10 +215,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   SizedBox(
-                    height: _height * 0.01,
+                    height: _height * 0.005,
                   ),
                   CircularPercentIndicator(
-                    radius: 50.0,
+                    radius: 45.0,
                     lineWidth: 8.0,
                     percent: (actualSpeed / 150.0),
                     center: Text(
@@ -226,7 +228,7 @@ class _HomePageState extends State<HomePage> {
                     progressColor: Color.fromARGB(255, 239, 26, 143),
                   ),
                   SizedBox(
-                    height: _height * 0.03,
+                    height: _height * 0.02,
                   ),
                   Text(
                     actualSpeed.toString() + ' RPM',
@@ -267,7 +269,7 @@ class _HomePageState extends State<HomePage> {
                     height: _height * 0.06,
                   ),
                   Slider(
-                    value: setPointSpeed/1.0,
+                    value: setPointSpeed / 1.0,
                     max: 150.0,
                     divisions: 10,
                     label: (setPointSpeed / 100).round().toString(),
@@ -323,7 +325,7 @@ class _HomePageState extends State<HomePage> {
   }
 
 /* control speed Periodically ******************************************************/
- /* controlSpeedOnChange() async {
+  /* controlSpeedOnChange() async {
     Timer.periodic(const Duration(seconds: 3), (timer) async {
       await controlSpeed();
       setState(() {});
@@ -352,6 +354,18 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           actions: <Widget>[
+            TextField(
+              controller: serverController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Add Server',
+              ),
+              onChanged: (text) {
+                setState(() {
+                  urlWeb = serverController.text;
+                });
+              },
+            ),
             TextButton(
               child: const Text('OK'),
               onPressed: () {
